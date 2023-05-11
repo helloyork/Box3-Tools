@@ -1,4 +1,10 @@
-console.clear();
+/**
+ * !info {Project} -来自Nomen
+ * NomenSQLitePro:介绍帖子https://shequ.codemao.cn/community/539869
+ */
+
+
+
 
 class NomenSQLitePro {
     constructor() {
