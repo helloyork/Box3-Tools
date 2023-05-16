@@ -30,7 +30,7 @@ class NomenSQLite {
         })
         console.log(JSON.stringify(this._data));
         if (!Object.keys(this._data).length) return this.instance;
-        let errMessage = null;
+        let errMessage = '';
         if (typeof action == "string" && action.includes('create')) {
             for (let i = 0; i < Object.keys(this._data).length; i++) {
                 let eString = `CREATE TABLE IF NOT EXISTS "${Object.keys(this._data)[i]}" 
@@ -47,8 +47,8 @@ class NomenSQLite {
         if (typeof callback == "function") callback(null, errMessage);
         return this.instance;
     }
-    _exec(cmd) {
-        return (typeof cmd == 'string') ? db.sql([cmd]) : new Promise(resolve => resolve(new TypeError('传入参数有误，预期应该为string')))
+    _exec(cmd, p) {
+        return (typeof cmd == 'string') ? db.sql.apply(null, [cmd.split(/(?<!\\)[\?](?=(?:[^"]*"[^"]*")*[^"]*$)/g), ...(p ? p : [])]) : new Promise(resolve => resolve(new TypeError('传入参数有误，预期应该为string')))
     }
     getAllTables() {
         return Object.keys(NomenSQLite._data);
@@ -58,26 +58,29 @@ class NomenSQLite {
     }
     operate(name) {
         let t = this;
-        if (typeof name == "string" && NomenSQLite.launched) return {
+        if (typeof name == "string") return {
             select(column, value) {
-                return t._exec(`SELECT * FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (typeof value == "number") ? value : `"${value}"`)}`)
+                let p = [];
+                return t._exec(`SELECT * FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (p.push(value), "?"))}`, p)
             },
             remove(column, value) {
-                return t._exec(`DELETE FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (typeof value == "number") ? value : `"${value}"`)}`)
+                let p=[];
+                return t._exec(`DELETE FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (p.push(value),'?'))}`,p)
             },
             insert(value) {
                 if (Object.prototype.toString.call(value) == '[object Object]' && Object.keys(value).length) {
-                    let eString = `(${Object.keys(value).map(v => `"${v}"`).join(',')}) VALUES(${Object.values(value).map(v => (typeof v == "number") ? v : `"${v}"`).join(',')})`;
-                    return t._exec(`INSERT INTO "${name}" ${eString}`);
+                    let p = [];
+                    let eString = `(${Object.keys(value).map(v => `"${v}"`).join(',')}) VALUES(${Object.values(value).map(v => { p.push(v); return `?`; }).join(',')})`;
+                    return t._exec(`INSERT INTO "${name}" ${eString}`, p);
                 } else return null;
             },
             update(column, value) {
                 if (Object.prototype.toString.call(value) == '[object Object]' && Object.keys(value).length && typeof column == "string" && column.includes('=')) {
-                    let eArr = [];
-                    Object.entries(value).forEach(([k, v]) => eArr.push(`"${k}" = "${v}"`));
-                    let aString = `${column == "*" ? "" : 'WHERE "' + column.split('=')[0] + '"="' + column.split('=')[1] + '"'}`;
+                    let eArr = [], p = [];
+                    Object.entries(value).forEach(([k, v]) => eArr.push(`"${k}" = ${(p.push(v),'?')}`));
+                    let aString = `${column == "*" ? "" : 'WHERE "' + column.split('=')[0] + '"=' + (p.push(column.split('=')[1]),'?')}`;
                     console.log(`UPDATE "${name}" SET ${eArr} ${aString}`)
-                    return t._exec(`UPDATE "${name}" SET ${eArr} ${aString}`);
+                    return t._exec(`UPDATE "${name}" SET ${eArr} ${aString}`,p);
                 } else return null;
             }
         }
