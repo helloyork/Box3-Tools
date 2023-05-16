@@ -1,5 +1,6 @@
 /**
  * !info {Project} -来自Nomen
+ * @version 1.2.0
  * NomenSQLite:介绍帖子https://shequ.codemao.cn/wiki/forum/539617
  */
 
