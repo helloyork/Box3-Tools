@@ -1,10 +1,3 @@
-/**
- * !info {Project} -来自Nomen
- * @version 1.2.0
- * NomenSQLite:介绍帖子https://shequ.codemao.cn/wiki/forum/539617
- */
-
-
 
 class NomenSQLite {
     constructor() {
@@ -80,7 +73,6 @@ class NomenSQLite {
                     let eArr = [], p = [];
                     Object.entries(value).forEach(([k, v]) => eArr.push(`"${k}" = ${(p.push(v),'?')}`));
                     let aString = `${column == "*" ? "" : 'WHERE "' + column.split('=')[0] + '"=' + (p.push(column.split('=')[1]),'?')}`;
-                    console.log(`UPDATE "${name}" SET ${eArr} ${aString}`)
                     return t._exec(`UPDATE "${name}" SET ${eArr} ${aString}`,p);
                 } else return null;
             }
@@ -100,30 +92,3 @@ class NomenSQLite {
         BLOB: 'BLOB'
     }
 }
-
-const test = {
-    'Nomenawa': [
-        { name: 'coin', type: NomenSQLite.DataType.NUMBER, notnull: true },
-        { name: 'bag', type: NomenSQLite.DataType.TEXT, notnull: false }
-    ],
-    'Nomenawa2': [
-        { name: 'coin2', type: NomenSQLite.DataType.NUMBER, notnull: true },
-        { name: 'bag2', type: NomenSQLite.DataType.TEXT, notnull: false }
-    ],
-};
-
-
-(async () => {
-    let Nomen = await NomenSQLite.launch(test, NomenSQLite.LaunchAction.CREATE_OR_LAUNCH, (a, b) => { console.log(b) });
-    console.log(JSON.stringify(await db.sql(['SELECT * FROM sqlite_master'])));
-    let NomenTable = Nomen.operate('Nomenawa');
-    // await NomenTable.insert({coin:18,bag:'a bag!3'});
-    // await NomenTable.update('coin=18',{bag:'a bag!114'})
-    console.log(`DEBUG:${JSON.stringify(await NomenTable.select('*'))}`)
-    console.log(Nomen.getAllTables())
-})()
-
-module.exports = {
-    NomenSQLite
-}
-
