@@ -109,24 +109,24 @@ class NCSelector {
 /**
  * 搜寻一个实体，要求类型为玩家，y坐标大于8
  */
-new NCSelector('@e[type=player,y=8..]')
+(new NCSelector('@e[type=player,y=8..]')).exec(executor)
 
 /**
  * 搜寻一个实体，y坐标小于8，x为5
  */
-new NCSelector('@e[y=..8,x=5]')
+(new NCSelector('@e[y=..8,x=5]')).exec(executor)
 
 /**
  * 搜寻一个玩家，包含标签NomenQwQ
  */
-new NCSelector('@a[tag="NomenQwQ"]')
+(new NCSelector('@a[tag="NomenQwQ"]')).exec(executor)
 
 /**
  * 搜寻一个实体，与执行者的距离大于3
  */
-new NCSelector('@e[distance=3..]')
+(new NCSelector('@e[distance=3..]')).exec(executor)
 
 /**
  * 搜寻执行者本身
  */
-new NCSelector('@s');
+(new NCSelector('@s')).exec(executor);
