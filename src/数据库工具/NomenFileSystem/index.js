@@ -1,17 +1,15 @@
 /**
  * !info {Project} -来自Nomen
+ * @version 1.7.3
  * NomenFS 基于SQL的文件与目录管理系统 - 介绍：shequ.codemao.cn/community/540876
  */
 
-
-
-
 class NomenFS {
-    constructor() {
-        if (!this.operator) this.operator = (new NomenSQLite()).operate('NomenFileSystemMain');
+    constructor(ns) {
+        if (!this.operator) this.operator = (new ns()).operate('NomenFileSystemMain');
         if (NomenFS.instance) return NomenFS.instance;
     }
-    static async launch() {
+    static async launch(NomenSQLite) {
         if (NomenSQLite) var ns = NomenSQLite;
         else throw new Error('NomenSQLite不存在')
         let NSqlite = await ns.launch({
@@ -25,7 +23,7 @@ class NomenFS {
                 { name: 'file', type: ns.DataType.TEXT },
             ]
         }, ns.LaunchAction.CREATE_OR_LAUNCH, (v, r) => { if (r) throw NomenFS.ErrorGenerator('0', r) });
-        if (!this.instance) this.instance = new this();
+        if (!this.instance) this.instance = new this(ns);
         if (!this.operator) this.operator = NSqlite.operate('NomenFileSystemMain');
         return this.instance;
     }
@@ -100,7 +98,7 @@ class NomenFS {
         if (!prt.length || prt[0].type != NomenFS.fileType['folder']) throw NomenFS.ErrorGenerator("2");
         let crt = await NomenFS.operator.select('path', path);
         if (crt.length && crt[0].type == NomenFS.fileType['folder']) throw NomenFS.ErrorGenerator("3");
-        if (crt.length) await NomenFS.operator.update(`path="${path}"`, ctn)
+        if (crt.length)await NomenFS.operator.update(`path=${path}`, ctn)
         else await NomenFS.operator.insert(ctn);
         return path;
     }
@@ -118,7 +116,7 @@ class NomenFS {
                 creationdate: Date.now(),
                 property: JSON.stringify(NomenFS.filePropertyGenerator({ readonly })),
             });
-            if(cpath.parentFolder) await this.mkdir(cpath.parentFolder)
+            if (cpath.parentFolder) await this.mkdir(cpath.parentFolder)
         }
         return path;
     }
@@ -156,7 +154,7 @@ class NomenFS {
         let tf = await NomenFS.operator.select('path', path);
         if (!tf.length) throw NomenFS.ErrorGenerator("1");
         if (tf[0].type == NomenFS.fileType["folder"]) throw NomenFS.ErrorGenerator("3");
-        await this.writeFile(path, tf[0].file.concat(content));
+        await this.writeFile(path, (tf[0].file.concat(content)));
         return path;
     }
     async rename(path, newname) {

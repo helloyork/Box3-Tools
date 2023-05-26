@@ -1,3 +1,10 @@
+/**
+ * !info {Project} -来自Nomen
+ * @version 1.2.2
+ * NomenSQLite SQL数据管理系统
+ */
+
+
 
 class NomenSQLite {
     constructor() {
