@@ -1,6 +1,7 @@
 /**
  * !info {Project} -来自Nomen
  * @version 1.7.3
+ * @requires NomenSQLite@1.2.1
  * NomenFS 基于SQL的文件与目录管理系统 - 介绍：shequ.codemao.cn/community/540876
  */
 
