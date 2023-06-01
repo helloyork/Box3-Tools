@@ -99,3 +99,7 @@ class NomenSQLite {
         BLOB: 'BLOB'
     }
 }
+
+module.exports={
+    NomenSQLite
+}
