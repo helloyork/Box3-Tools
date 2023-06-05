@@ -4,8 +4,6 @@
  * NomenSQLite SQL数据管理系统
  */
 
-
-
 class NomenSQLite {
     constructor() {
         if (NomenSQLite.instance) return NomenSQLite.instance;
