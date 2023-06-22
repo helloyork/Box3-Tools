@@ -1,220 +1,221 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>BOX3-Tools</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-        <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <link rel="icon" href="https://box3.codemao.cn/favicon.ico" type="icon">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
-        <style>
-            header {
-                background-color: #006cc5;
-                color: #ffffff;
-                background: #9CECFB;
-                background: -webkit-linear-gradient(to right, #0052D4, #65C7F7, #9CECFB);
-                background: linear-gradient(to right, #418aff, #4ec4ff, #9CECFB);
-            }
+<!DOCTYPE html>
+<html>
 
-            #cnblogs_post_body .cnblogs_code {
-                border-radius: 4px;
-                color: #000;
-                font-family: Courier New !important;
-                font-size: 13px !important;
-                margin: 5px 0;
-                overflow: auto;
-                padding: 5px;
-            }
+<head>
+    <title>BOX3-Tools</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="icon" href="https://box3.codemao.cn/favicon.ico" type="icon">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+    <style>
+        header {
+            background-color: #006cc5;
+            color: #ffffff;
+            background: #9CECFB;
+            background: -webkit-linear-gradient(to right, #0052D4, #65C7F7, #9CECFB);
+            background: linear-gradient(to right, #418aff, #4ec4ff, #9CECFB);
+        }
 
-            .hljs-built_in,
-            .hljs-keyword,
-            .hljs-name,
-            .hljs-selector-tag,
-            .hljs-tag {
-                color: #332870 !important;
-            }
+        #cnblogs_post_body .cnblogs_code {
+            border-radius: 4px;
+            color: #000;
+            font-family: Courier New !important;
+            font-size: 13px !important;
+            margin: 5px 0;
+            overflow: auto;
+            padding: 5px;
+        }
 
-            .hljs-emphasis,
-            .hljs-strong {
-                color: #a8a8a2 !important;
-            }
+        .hljs-built_in,
+        .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag,
+        .hljs-tag {
+            color: #332870 !important;
+        }
 
-            .hljs-built_in,
-            .hljs-keyword,
-            .hljs-name,
-            .hljs-selector-tag,
-            .hljs-tag {
-                color: #bababa !important;
-            }
+        .hljs-emphasis,
+        .hljs-strong {
+            color: #a8a8a2 !important;
+        }
 
-            .hljs-bullet,
-            .hljs-link,
-            .hljs-literal,
-            .hljs-number,
-            .hljs-quote,
-            .hljs-regexp {
-                color: #27c94a !important;
-            }
+        .hljs-built_in,
+        .hljs-keyword,
+        .hljs-name,
+        .hljs-selector-tag,
+        .hljs-tag {
+            color: #bababa !important;
+        }
 
-            .hljs-code,
-            .hljs-selector-class {
-                color: #eeff00 !important;
-            }
+        .hljs-bullet,
+        .hljs-link,
+        .hljs-literal,
+        .hljs-number,
+        .hljs-quote,
+        .hljs-regexp {
+            color: #27c94a !important;
+        }
 
-            .hljs-emphasis {
-                font-style: italic !important;
-            }
+        .hljs-code,
+        .hljs-selector-class {
+            color: #eeff00 !important;
+        }
 
-            .hljs-attribute,
-            .hljs-keyword,
-            .hljs-name,
-            .hljs-section,
-            .hljs-selector-tag,
-            .hljs-variable {
-                color: #00c3ff !important;
-            }
+        .hljs-emphasis {
+            font-style: italic !important;
+        }
 
-            .hljs-attr,
-            .hljs-params {
-                color: #b9b9b9 !important;
-            }
+        .hljs-attribute,
+        .hljs-keyword,
+        .hljs-name,
+        .hljs-section,
+        .hljs-selector-tag,
+        .hljs-variable {
+            color: #00c3ff !important;
+        }
 
-            .hljs-string {
-                color: #ffbb00 !important;
-            }
+        .hljs-attr,
+        .hljs-params {
+            color: #b9b9b9 !important;
+        }
 
-            .hljs-addition,
-            .hljs-built_in,
-            .hljs-builtin-name,
-            .hljs-selector-attr,
-            .hljs-selector-id,
-            .hljs-selector-pseudo,
-            .hljs-subst,
-            .hljs-symbol,
-            .hljs-template-tag,
-            .hljs-template-variable,
-            .hljs-title,
-            .hljs-type {
-                color: #dfe231 !important;
-            }
+        .hljs-string {
+            color: #ffbb00 !important;
+        }
 
-            .hljs-comment,
-            .hljs-deletion {
-                color: #008839 !important;
-            }
+        .hljs-addition,
+        .hljs-built_in,
+        .hljs-builtin-name,
+        .hljs-selector-attr,
+        .hljs-selector-id,
+        .hljs-selector-pseudo,
+        .hljs-subst,
+        .hljs-symbol,
+        .hljs-template-tag,
+        .hljs-template-variable,
+        .hljs-title,
+        .hljs-type {
+            color: #dfe231 !important;
+        }
 
-            .hljs-meta {
-                color: #00ff0d !important;
-            }
+        .hljs-comment,
+        .hljs-deletion {
+            color: #008839 !important;
+        }
 
-            #cnblogs_post_body .toc ul {
-                max-height: 550px;
-                overflow-y: auto;
-            }
+        .hljs-meta {
+            color: #00ff0d !important;
+        }
 
-            .cnblogs-markdown .hljs {
-                display: block;
-                overflow-x: auto;
-                padding: 0.5em !important;
-                background: #ffffff !important;
-                font-size: 14px !important;
-                color: #696969 !important;
-                font-family: Source Code Pro, Consolas, Menlo, Monaco, Courier New, monospace !important;
-            }
+        #cnblogs_post_body .toc ul {
+            max-height: 550px;
+            overflow-y: auto;
+        }
 
-            #cnblogs_post_body h1::before {
-                content: "H1";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        .cnblogs-markdown .hljs {
+            display: block;
+            overflow-x: auto;
+            padding: 0.5em !important;
+            background: #ffffff !important;
+            font-size: 14px !important;
+            color: #696969 !important;
+            font-family: Source Code Pro, Consolas, Menlo, Monaco, Courier New, monospace !important;
+        }
 
-            #cnblogs_post_body h2::before {
-                content: "H2";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        #cnblogs_post_body h1::before {
+            content: "H1";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #cnblogs_post_body h3::before {
-                content: "H3";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        #cnblogs_post_body h2::before {
+            content: "H2";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #mainContent #post_detail #cnblogs_post_body h4::before {
-                content: "h4";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        #cnblogs_post_body h3::before {
+            content: "H3";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #cnblogs_post_body h5::before {
-                content: "h5";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        #mainContent #post_detail #cnblogs_post_body h4::before {
+            content: "h4";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #cnblogs_post_body h6::before {
-                content: "h6";
-                margin-right: 10px;
-                color: gainsboro;
-            }
+        #cnblogs_post_body h5::before {
+            content: "h5";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #cnblogs_post_body td.hljs-ln-numbers {
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                text-align: center;
-                color: #ccc;
-                border-right: 1px solid #ccc;
-                vertical-align: top;
-                padding-right: 5px;
-            }
+        #cnblogs_post_body h6::before {
+            content: "h6";
+            margin-right: 10px;
+            color: gainsboro;
+        }
 
-            #cnblogs_post_body .hljs td {
-                border-collapse: inherit;
-                min-width: unset;
-                padding-left: 20px;
-                padding-right: 10px;
-            }
+        #cnblogs_post_body td.hljs-ln-numbers {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            text-align: center;
+            color: #ccc;
+            border-right: 1px solid #ccc;
+            vertical-align: top;
+            padding-right: 5px;
+        }
 
-            body {
-                background: #232526;
-                background: -webkit-linear-gradient(to right, #414345, #232526);
-                background: linear-gradient(to right, #414345, #232526);
-            }
-        </style>
-    </head>
+        #cnblogs_post_body .hljs td {
+            border-collapse: inherit;
+            min-width: unset;
+            padding-left: 20px;
+            padding-right: 10px;
+        }
 
-    <body>
-        <div class="container">
-            <header>
-                <div class="row clearfix" style="margin-bottom: 60px;">
-                    <div class="col-md-12 column">
-                        <h3 class="text-center">
-                            Box3-Tools主页面
-                        </h3>
-                        <h4 class="text-center" style="color: #919191;">
-                            本网站界面由 <strong>烟魂</strong>和<strong>Nomen</strong>开发<br />
-                            <a href="https://github.com/helloyork/Box3-Tools" target="_blank">Nomen小队 Box3-Tools仓库</a>
-                        </h4>
-                    </div>
-                </header>
-            <script>
-                function getSrcUrl(father, child) {
-                    return `https://raw.githubusercontent.com/helloyork/Box3-Tools/main/src/${encodeURIComponent(father)}/${encodeURIComponent(child)}/${encodeURIComponent('index.js')}`;
-                }
-                fetch('https://raw.githubusercontent.com/helloyork/Box3-Tools/main/project/src.json')
-                    .then(v => v.json())
-                    .then(v => {
-                        let tw = Object.keys(v);
-                        tw.forEach((c, i) => {
-                            let twele = document.createElement('div');
-                            twele.innerHTML = `<div class="panel-group" id="panels-1">
+        body {
+            background: #ffffff;
+            background: -webkit-linear-gradient(to right, #414345, #232526);
+            background: linear-gradient(to right, #414345, #232526);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="row clearfix" style="margin-bottom: 60px;">
+                <div class="col-md-12 column">
+                    <h3 class="text-center">
+                        Box3-Tools主页面
+                    </h3>
+                    <h4 class="text-center" style="color: #919191;">
+                        本网站界面由 <strong>烟魂</strong>和<strong>Nomen</strong>开发<br />
+                        <a href="https://github.com/helloyork/Box3-Tools" target="_blank">Nomen小队 Box3-Tools仓库</a>
+                    </h4>
+                </div>
+        </header>
+        <script>
+            function getSrcUrl(father, child) {
+                return `https://raw.githubusercontent.com/helloyork/Box3-Tools/main/src/${encodeURIComponent(father)}/${encodeURIComponent(child)}/${encodeURIComponent('index.js')}`;
+            }
+            fetch('https://raw.githubusercontent.com/helloyork/Box3-Tools/main/project/src.json')
+                .then(v => v.json())
+                .then(v => {
+                    let tw = Object.keys(v);
+                    tw.forEach((c, i) => {
+                        let twele = document.createElement('div');
+                        twele.innerHTML = `<div class="panel-group" id="panels-1">
                                                 <div class="panel panel-default">
                                                         <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panels-1" style="text-decoration:none;"
                                                             href="#panel-element-MAIN-${i}"><div class="panel-heading" style="text-decoration:none;">${c}</div></a>
@@ -233,34 +234,34 @@
                                                     </div>
                                                 </div>
                                             </div>`;
-                            for (let r = 0; r < v[c].length; r++) {
-                                fetch(getSrcUrl(c, v[c][r]))
-                                    .then(u => u.text())
-                                    .then(u => {
-                                        let pnele = document.querySelector(`#panel-element-MAIN-${i}`).querySelector('#panel-586155');
-                                        let pnelechild = document.createElement('div');
-                                        pnelechild.innerHTML = `<div class="panel panel-default">
+                        for (let r = 0; r < v[c].length; r++) {
+                            fetch(getSrcUrl(c, v[c][r]))
+                                .then(u => u.text())
+                                .then(u => {
+                                    let pnele = document.querySelector(`#panel-element-MAIN-${i}`).querySelector('#panel-586155');
+                                    let pnelechild = document.createElement('div');
+                                    pnelechild.innerHTML = `<div class="panel panel-default">
                                         <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-586155" style="text-decoration:none;"
                                             href="#panel-element-${i}-${r}"><div class="panel-heading" style="text-decoration:none;">${v[c][r]}</div></a>
                                     <div id="panel-element-${i}-${r}" class="panel-collapse collapse">
                                         <div id="cnblogs_post_body" class="blogpost-body cnblogs-markdown">
                                             <pre>
                                             <code class="language-js">
-                                                ${hljs.highlight(u,{language:'javascript'}).value}
+                                                ${hljs.highlight(u, { language: 'javascript' }).value}
                                             </code>
                                         </pre>
                                         </div>
                                     </div>
                                 </div>`;
-                                        pnele.appendChild(pnelechild);
-                                    })
-                            }
-                            document.getElementById('tlsbody').appendChild(twele);
-                        })
-                    }).catch(e => console.error(e));
-            </script>
-            <div id="tlsbody">
+                                    pnele.appendChild(pnelechild);
+                                })
+                        }
+                        document.getElementById('tlsbody').appendChild(twele);
+                    })
+                }).catch(e => console.error(e));
+        </script>
+        <div id="tlsbody">
         </div>
-    </body>
+</body>
 
-    </html>
+</html>
