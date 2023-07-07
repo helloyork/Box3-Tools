@@ -14,7 +14,8 @@ declare const voxels: GameVoxels;
 declare const resources: {
   ls: (path?: string) => GameAssetListEntry[];
 };
-declare const storage: GameStorageAPI;
+declare const db: GameDatabase;
+declare const storage: GameStorage;
 declare const http: GameHttpAPI;
 declare const rtc: GameRTC;
 declare const gui: GameGUI;
@@ -11950,6 +11951,7 @@ declare class GamePlayer {
     /**
      * If true, then player can't chat
      * @category chat
+     * @deprecated currently not in use
      */
     muted: boolean;
     /**
@@ -13198,6 +13200,52 @@ declare class GameRTCChannel {
 declare class GameRTC {
     createChannel: (channelId?: string) => Promise<GameRTCChannel>;
     constructor(createChannel: (channelId?: string) => Promise<GameRTCChannel>);
+}
+declare type DB_ERROR_STATUS = 'PARAMS_INVALID' | 'DB_NAME_INVALID' | 'KEY_INVALID' | 'VALUE_INVALID' | 'SERVER_FETCH_ERROR' | 'UNKNOWN';
+declare class GameStorage {
+    getDataStorage: (key: string) => GameDataStorage;
+    constructor(getDataStorage: (key: string) => GameDataStorage);
+}
+declare type JSONValue = string | number | boolean | {
+    [x: string]: JSONValue;
+} | Array<JSONValue>;
+declare type ResultValue = {
+    key: string;
+    value: JSONValue;
+    version: string;
+    updateTime: number;
+    createTime: number;
+};
+declare type ListReturnValue = {
+    items: ResultValue[];
+    isLastPage: boolean;
+};
+declare type ReturnValue = ResultValue | undefined;
+declare type ListPageOptions = {
+    cursor: number;
+    pageSize?: number;
+};
+/**
+ *
+ * A Data storage class
+ * @export
+ * @class GameDataStorage
+ */
+declare class GameDataStorage {
+    readonly key: string;
+    set: (key: string, value: JSONValue) => Promise<void>;
+    update: (key: string, handler: (prevValue: ReturnValue) => JSONValue) => Promise<void>;
+    get: (key: string) => Promise<ReturnValue>;
+    getVersion: (key: string, version: string) => Promise<ReturnValue>;
+    list: (options: ListPageOptions) => Promise<QueryList>;
+    remove: (key: string) => Promise<ReturnValue>;
+    constructor(key: string, set: (key: string, value: JSONValue) => Promise<void>, update: (key: string, handler: (prevValue: ReturnValue) => JSONValue) => Promise<void>, get: (key: string) => Promise<ReturnValue>, getVersion: (key: string, version: string) => Promise<ReturnValue>, list: (options: ListPageOptions) => Promise<QueryList>, remove: (key: string) => Promise<ReturnValue>);
+}
+declare class QueryList {
+    getCurrentPage: () => ReturnValue[];
+    nextPage: () => Promise<void>;
+    isLastPage: boolean;
+    constructor(getCurrentPage: () => ReturnValue[], nextPage: () => Promise<void>);
 }
 declare class URLSearchParams {
     constructor(args: any);
