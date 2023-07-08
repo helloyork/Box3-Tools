@@ -19,7 +19,12 @@
                     })(),
                     r.this ?? null),
                 [...Array.from(
-                    [...(r.set = new Set(), r.set.add(c), r.set.values())][0]
+                    [...
+                        (r.set = new Set(),
+                            r.set.add(c),
+                            r.set.values()
+                        )
+                    ][0]
                 )
                 ]
             )
