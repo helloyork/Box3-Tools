@@ -55,11 +55,9 @@ class NomenDBCore {
     select(query) {
         let req = Array.isArray(query) ? query.join(",") : query;
         let { params, strs } = this._genSelector(this.query);
-        console.log(JSON.stringify({ params, strs }))
         let output = `SELECT ${req} FROM ${this._name} ${this.query.length ? "WHERE " + (strs[0] ? strs.join("") : "") : ""}`
         output = output.concat(` ${this._order.length ? `ORDER BY ` + this._order.map(v => v.key + " " + v.type).join(",") : ""} ` +
             `${this._limit ? "LIMIT " + Number(this._limit) : ""} ${(this._offset && this._limit) ? "OFFSET " + Number(this._offset) : ""}`)
-        console.log(JSON.stringify(strs))
         return this._exec(output, params);
     }
     update(...value) {
@@ -133,7 +131,6 @@ class NomenDBCore {
         return this;
     }
     async _exec(ex, params) {
-        console.log(ex)
         let result = await this._sql([...ex.split(/(?<!\\)[\?](?=(?:[^"]*"[^"]*")*[^"]*$)/g)], ...params || []);
         if (this.handler) this.handler(result);
         return this.hook ? this.hook(result) : result;

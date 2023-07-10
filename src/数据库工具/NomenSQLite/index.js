@@ -1,6 +1,6 @@
 /**
  * !info {Project} -来自Nomen
- * @version 1.2.2
+ * @version 1.2.3
  * NomenSQLite SQL数据管理系统
  */
 
@@ -10,6 +10,9 @@ class NomenSQLite {
         NomenSQLite.instance = this;
     }
     static launched = false;
+    static get version(){
+        return "1.2.3".split(".").map(v=>Number(v));
+    };
     static async launch(config, action, callback) {
         if (!config) throw new Error('请传入配置参数后重试');
         if (!this.instance) this.instance = new NomenSQLite();
@@ -63,8 +66,8 @@ class NomenSQLite {
                 return t._exec(`SELECT * FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (p.push(value), "?"))}`, p)
             },
             remove(column, value) {
-                let p=[];
-                return t._exec(`DELETE FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (p.push(value),'?'))}`,p)
+                let p = [];
+                return t._exec(`DELETE FROM "${name}" ${column == "*" ? `` : (`WHERE "${column}" = ` + (p.push(value), '?'))}`, p)
             },
             insert(value) {
                 if (Object.prototype.toString.call(value) == '[object Object]' && Object.keys(value).length) {
@@ -76,13 +79,16 @@ class NomenSQLite {
             update(column, value) {
                 if (Object.prototype.toString.call(value) == '[object Object]' && Object.keys(value).length && typeof column == "string" && column.includes('=')) {
                     let eArr = [], p = [];
-                    Object.entries(value).forEach(([k, v]) => eArr.push(`"${k}" = ${(p.push(v),'?')}`));
-                    let aString = `${column == "*" ? "" : 'WHERE "' + column.split('=')[0] + '"=' + (p.push(column.split('=')[1]),'?')}`;
-                    return t._exec(`UPDATE "${name}" SET ${eArr} ${aString}`,p);
+                    Object.entries(value).forEach(([k, v]) => eArr.push(`"${k}" = ${(p.push(v), '?')}`));
+                    let aString = `${column == "*" ? "" : 'WHERE "' + column.split('=')[0] + '"=' + (p.push(column.split('=')[1]), '?')}`;
+                    return t._exec(`UPDATE "${name}" SET ${eArr} ${aString}`, p);
                 } else return null;
             }
         }
         return {};
+    }
+    static getInstance() {
+        return this.instance ? this.instance : new this();
     }
     static instance = null;
     static LaunchAction = {
@@ -98,6 +104,6 @@ class NomenSQLite {
     }
 }
 
-module.exports={
+module.exports = {
     NomenSQLite
 }
