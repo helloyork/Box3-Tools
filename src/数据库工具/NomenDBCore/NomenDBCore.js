@@ -1,3 +1,9 @@
+/**
+ * !info {Module} -来自Nomen
+ * @version 1.0.0
+ * NomenDBCore: 真正轻量级链式易于理解的通用SQL表格数据管理器 - https://shequ.codemao.cn/community/549057
+ */
+
 class NomenDBCore {
     constructor(config) {
         if (!config) throw new Error("The config is required");
