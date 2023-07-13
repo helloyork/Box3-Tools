@@ -1,5 +1,6 @@
 /**
  * !info {Module} -来自Nomen
+ * @version 1.0.1
  * 整活）NomenItemStack：快捷管理物品栈/背包，具有堆叠上限和全map操作 - https://shequ.codemao.cn/community/550650
  */
 
@@ -62,8 +63,8 @@ class NomenItemStack {
                     l -= this.maxItem - r[i].num;
                     r[i].num += this.maxItem - r[i].num;
                 } else {
-                    l = 0;
                     r[i].num += l;
+                    l = 0;
                     return;
                 }
             };
