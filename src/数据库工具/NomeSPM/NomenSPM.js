@@ -1,6 +1,6 @@
 /**
  * !info {Project} -来自Nomen
- * @version 1.0.0
+ * @version 1.0.1
  * @requires NomenSQLite
  * @requires NomenDBCore
  * 玩家数据远程管理的便捷方案
@@ -64,14 +64,14 @@ class NomenSPM {
         };
         this.save = async function (_this) {
             if (!t.state) await t._init();
-            let e = _this;
-            let data = fields.map(v => {
-                return e[v] ? e[v] : init[v];
+            let e = _this, output = {};
+            fields.forEach(v => {
+                output[v] = e[v] ? e[v] : init[v];
             });
             await new t.NomenDBCore(dbcoreConfig).where({
                 userkey: e.player.userKey
             }).update({
-                data: JSON.stringify(data)
+                data: JSON.stringify(output)
             });
         };
     }
@@ -139,4 +139,4 @@ class NomenSPM {
     }
 }
 
-exports.module.NomenSPM = NomenSPM;
+module.exports.NomenSPM = NomenSPM;
