@@ -2,6 +2,7 @@
  * [Archived] !info {Module} -来自Nomen
  * @version 1.0.0
  * @requires NomenGUI
+ * 警告，本文件可能存在非标准特性，请谨慎投入生产
  * NomenGUI & NomenNode: 何不以DOM的形式便捷的管理你的GUI界面？ - https://shequ.codemao.cn/community/552140
  */
 
