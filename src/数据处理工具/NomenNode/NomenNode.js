@@ -1,6 +1,6 @@
 /**
  * !info {Module} -来自Nomen
- * @version 1.0.2
+ * @version 1.0.3
  * NomenGUI & NomenNode: 何不以DOM的形式便捷的管理你的GUI界面？ - https://shequ.codemao.cn/community/552140
  */
 
@@ -88,6 +88,9 @@ class NomenNode {
             cancel: () => isCancelled = true
         });
         return this;
+    }
+    registerClickEvent(){
+        this.bindings.push({ action: "sendMessage", messageName: this.id, event: "click", selector:`#${this.id}` })
     }
     async setAttributeSync(name, value) {
         this.setAttribute(name, value);
