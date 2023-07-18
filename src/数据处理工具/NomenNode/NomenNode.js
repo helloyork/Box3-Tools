@@ -90,7 +90,8 @@ class NomenNode {
         return this;
     }
     registerClickEvent(){
-        this.bindings.push({ action: "sendMessage", messageName: this.id, event: "click", selector:`#${this.id}` })
+        this.bindings.push({ action: "sendMessage", messageName: this.id, event: "click", selector:`#${this.id}` });
+        return this;
     }
     async setAttributeSync(name, value) {
         this.setAttribute(name, value);
