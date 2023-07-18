@@ -1,6 +1,6 @@
 /**
  * !info {Module} -来自Nomen
- * @version 1.0.0
+ * @version 1.0.1
  * NomenGUI & NomenNode: 何不以DOM的形式便捷的管理你的GUI界面？ - https://shequ.codemao.cn/community/552140
  */
 
