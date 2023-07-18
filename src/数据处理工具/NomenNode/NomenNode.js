@@ -16,11 +16,12 @@ class NomenNode {
         this.children = children || [];
         this.name = name;
         this.id = data.id || "_";
+        this.listeners = [];
     }
     appendChild(child) {
         if (!(child instanceof NomenNode)) return;
         this.children.push(child);
-        return this.children.length;
+        return this;
     }
     cloneNode(deep) {
         return new NomenNode({
@@ -43,14 +44,17 @@ class NomenNode {
     insertBefore(newNode, referenceNode) {
         if (!(newNode instanceof NomenNode) || !~this.children.indexOf(referenceNode)) return;
         this.children.splice(this.children.indexOf(referenceNode), 0, newNode);
+        return this;
     }
     removeChild(child) {
         if (!~this.children.indexOf(child)) return;
         this.children.splice(this.children.indexOf(child), 1);
+        return this;
     }
     replaceChild(newChild, oldChild) {
         if (!(newChild instanceof NomenNode) || !~this.children.indexOf(oldChild)) return;
-        this.children.splice(this.children.indexOf(oldChild), 1, newChild)
+        this.children.splice(this.children.indexOf(oldChild), 1, newChild);
+        return this;
     }
     toData(isChild) {
         return isChild ? {
@@ -68,9 +72,20 @@ class NomenNode {
     }
     setAttribute(name, value) {
         this.data.attributes[name] = value;
+        return this;
     }
     getAttribute(name) {
-        return this.data.attributes[name]
+        return this.data.attributes[name];
+    }
+    addEventListener(type, handler) {
+        if (typeof handler != "function") return;
+        let isCancelled = false;
+        this.listeners.push({
+            listener: gui.onMessage(d => {
+                if (d.name == this.id && !isCancelled) handler(d);
+            }),
+            cancel: () => isCancelled = true
+        });
     }
     async setAttributeSync(name, value) {
         this.setAttribute(name, value);
@@ -79,4 +94,8 @@ class NomenNode {
     async getAttributeSync(name) {
         return await gui.getAttribute(this.entity, `#${this.data.id}`, name);
     }
+}
+
+module.exports = {
+    NomenNode
 }

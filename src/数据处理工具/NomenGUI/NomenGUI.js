@@ -1,5 +1,5 @@
 /**
- * !info {Module} -来自Nomen
+ * [Archived] !info {Module} -来自Nomen
  * @version 1.0.0
  * @requires NomenGUI
  * NomenGUI & NomenNode: 何不以DOM的形式便捷的管理你的GUI界面？ - https://shequ.codemao.cn/community/552140
@@ -63,4 +63,8 @@ class NomenGUI {
     static getInstance() {
         return this.instance;
     }
+}
+
+module.exports = {
+    NomenGUI
 }
