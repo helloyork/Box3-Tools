@@ -1,6 +1,6 @@
 /**
  * !info {Module} -来自Nomen
- * @version 1.0.1
+ * @version 1.0.2
  * NomenGUI & NomenNode: 何不以DOM的形式便捷的管理你的GUI界面？ - https://shequ.codemao.cn/community/552140
  */
 
@@ -14,7 +14,7 @@ class NomenNode {
         this.data = data;
         this.entity = entity;
         this.children = children || [];
-        this.name = name;
+        this.name = data.name;
         this.id = data.id || "_";
         this.listeners = [];
     }
@@ -59,13 +59,14 @@ class NomenNode {
     toData(isChild) {
         return isChild ? {
             attributes: { ...this.data.attributes, id: this.id, },
-            name: this.data.name,
+            name: this.name,
             children: this.hasChildNodes() ? this.children.map(v => v.toData(true)) : undefined
         } : {
             display: this.display,
+            bindings: this.bindings,
             data: {
                 attributes: { ...this.data.attributes, id: this.id, },
-                name: this.data.name,
+                name: this.name,
                 children: this.hasChildNodes() ? this.children.map(v => v.toData(true)) : undefined
             },
         }
@@ -77,22 +78,23 @@ class NomenNode {
     getAttribute(name) {
         return this.data.attributes[name];
     }
-    addEventListener(type, handler) {
+    addEventListener(handler) {
         if (typeof handler != "function") return;
         let isCancelled = false;
         this.listeners.push({
             listener: gui.onMessage(d => {
-                if (d.name == this.id && !isCancelled) handler(d);
+                if (d.name == this.id && !isCancelled && d.entity === this.entity) handler(d);
             }),
             cancel: () => isCancelled = true
         });
+        return this;
     }
     async setAttributeSync(name, value) {
         this.setAttribute(name, value);
-        return await gui.setAttribute(this.entity, `#${this.data.id}`, name, value);
+        return await gui.setAttribute(this.entity, `#${this.id}`, name, value);
     }
     async getAttributeSync(name) {
-        return await gui.getAttribute(this.entity, `#${this.data.id}`, name);
+        return await gui.getAttribute(this.entity, `#${this.id}`, name);
     }
 }
 
