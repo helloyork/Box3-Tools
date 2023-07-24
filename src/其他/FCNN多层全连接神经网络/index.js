@@ -1,3 +1,10 @@
+/**
+ * !info {Project} -来自Nomen
+ * @version 1.1.0
+ * 基础多层全连接神经网络 - https://shequ.codemao.cn/community/553200
+ */
+
+
 
 function E(yOutput, yTarget) {
     return Math.pow(yOutput - yTarget, 2) / 2
@@ -60,6 +67,29 @@ class Neuron {
             this.error += c.getOutgoingNeuron().error * c.getWeight();
         });
         this.error *= this.getValue() * (1 - this.getValue());
+    }
+    updateWeightsUsingGPU(learningRate, targetData, isOutput, gpu) {
+        const kernel = gpu.createKernel(function (isOutput, iw, learningRate, targetData, thisValue, error, icc) {
+            const i = this.thread.x;
+            if (isOutput) {
+                return iw[i] - learningRate * (
+                    -((Math.pow(thisValue - targetData, 2) / 2)) * targetData * (1 - targetData) * (icc[i])
+                );
+            } else {
+                return iw[i] - learningRate * error * icc[i];
+            }
+        }).setOutput([this._incomingConnection.length]);
+        const incomingConnections = this._incomingConnection.map(v => v._weight);
+        const icc = this._incomingConnection.map(v => v._incoming.getValue());
+        console.log("init: " + (Date.now() - s))
+        const weights = kernel(isOutput, incomingConnections, learningRate, targetData, this.getValue(), this.error, icc);
+        for (let i = 0; i < weights.length; i++) {
+            this._incomingConnection[i].setWeight(weights[i]);
+        }
+    }
+    cleanConnections() {
+        if (this._incomingConnection) this._incomingConnection = [];
+        if (this._outgoingConnection) this._outgoingConnection = [];
     }
 }
 
@@ -252,6 +282,16 @@ class NeuralNetwork {
     }
     addOutputNode(node) {
         this.net["out"].push(node);
+    }
+    findNeuronById(id) {
+        return [...this.net["hidden"].flat(3), ...this.net["in"], ...this.net["out"]]
+            .filter(v => v.getId() == id)[0]
+    }
+    forEachNeuron(c) {
+        [...this.net["in"], ...this.net["hidden"].flat(3), ...this.net["out"]]
+            .forEach(v => {
+                c(v);
+            })
     }
 }
 
