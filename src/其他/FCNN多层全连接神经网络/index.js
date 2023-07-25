@@ -19,6 +19,7 @@ class Neuron {
         this.error = 0;
     }
     setValue(value) {
+        if(isNaN(value)) throw new Error("Invalid neuron value");
         this._value = value;
     }
     getValue() {
@@ -81,7 +82,6 @@ class Neuron {
         }).setOutput([this._incomingConnection.length]);
         const incomingConnections = this._incomingConnection.map(v => v._weight);
         const icc = this._incomingConnection.map(v => v._incoming.getValue());
-        console.log("init: " + (Date.now() - s))
         const weights = kernel(isOutput, incomingConnections, learningRate, targetData, this.getValue(), this.error, icc);
         for (let i = 0; i < weights.length; i++) {
             this._incomingConnection[i].setWeight(weights[i]);
@@ -101,10 +101,11 @@ class Connection {
         this._weight = weight;
     }
     connect() {
-        this._incoming.addOutgoingConnection(this);
-        this._outgoing.addIncomingConnection(this);
+        if (this._incoming) this._incoming.addOutgoingConnection(this);
+        if (this._outgoing) this._outgoing.addIncomingConnection(this);
     }
     setWeight(weight) {
+        if(isNaN(weight)) throw new Error("Invalid connection weight")
         this._weight = weight;
     }
     getWeight() {
@@ -288,10 +289,10 @@ class NeuralNetwork {
             .filter(v => v.getId() == id)[0]
     }
     forEachNeuron(c) {
-        [...this.net["in"], ...this.net["hidden"].flat(3), ...this.net["out"]]
-            .forEach(v => {
-                c(v);
-            })
+        let r = [...this.net["in"], ...this.net["hidden"].flat(3), ...this.net["out"]]
+        for (let i = 0; i < r.length; i++) {
+            c(r[i])
+        }
     }
 }
 
