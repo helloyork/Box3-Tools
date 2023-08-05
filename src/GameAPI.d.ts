@@ -13201,14 +13201,13 @@ declare class GameRTC {
     createChannel: (channelId?: string) => Promise<GameRTCChannel>;
     constructor(createChannel: (channelId?: string) => Promise<GameRTCChannel>);
 }
+
 declare type DB_ERROR_STATUS = 'PARAMS_INVALID' | 'DB_NAME_INVALID' | 'KEY_INVALID' | 'VALUE_INVALID' | 'SERVER_FETCH_ERROR' | 'UNKNOWN';
-declare class GameStorage {
+declare class GameStorage implements I.GameStorage {
     getDataStorage: (key: string) => GameDataStorage;
     constructor(getDataStorage: (key: string) => GameDataStorage);
 }
-declare type JSONValue = string | number | boolean | {
-    [x: string]: JSONValue;
-} | Array<JSONValue>;
+declare type JSONValue = I.JSONValue;
 declare type ResultValue = {
     key: string;
     value: JSONValue;
@@ -13220,28 +13219,24 @@ declare type ListReturnValue = {
     items: ResultValue[];
     isLastPage: boolean;
 };
-declare type ReturnValue = ResultValue | undefined;
-declare type ListPageOptions = {
-    cursor: number;
-    pageSize?: number;
-};
+declare type ReturnValue = I.ReturnValue;
+declare type ListPageOptions = I.ListPageOptions;
 /**
  *
  * A Data storage class
  * @export
  * @class GameDataStorage
  */
-declare class GameDataStorage {
+declare class GameDataStorage implements I.GameDataStorage {
     readonly key: string;
     set: (key: string, value: JSONValue) => Promise<void>;
     update: (key: string, handler: (prevValue: ReturnValue) => JSONValue) => Promise<void>;
     get: (key: string) => Promise<ReturnValue>;
-    getVersion: (key: string, version: string) => Promise<ReturnValue>;
     list: (options: ListPageOptions) => Promise<QueryList>;
     remove: (key: string) => Promise<ReturnValue>;
-    constructor(key: string, set: (key: string, value: JSONValue) => Promise<void>, update: (key: string, handler: (prevValue: ReturnValue) => JSONValue) => Promise<void>, get: (key: string) => Promise<ReturnValue>, getVersion: (key: string, version: string) => Promise<ReturnValue>, list: (options: ListPageOptions) => Promise<QueryList>, remove: (key: string) => Promise<ReturnValue>);
+    constructor(key: string, set: (key: string, value: JSONValue) => Promise<void>, update: (key: string, handler: (prevValue: ReturnValue) => JSONValue) => Promise<void>, get: (key: string) => Promise<ReturnValue>, list: (options: ListPageOptions) => Promise<QueryList>, remove: (key: string) => Promise<ReturnValue>);
 }
-declare class QueryList {
+declare class QueryList implements I.QueryList {
     getCurrentPage: () => ReturnValue[];
     nextPage: () => Promise<void>;
     isLastPage: boolean;
