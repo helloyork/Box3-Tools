@@ -108,7 +108,7 @@ GameDataStorage.prototype.setupUser = async function (user) {
 GameDataStorage.prototype.getRank = async function (type, displayType, num = 10, sorter) {
     let data = (await this.list({
         cursor: 0,
-        pageSize: Infinity
+        pageSize: Number.MAX_SAFE_INTEGER-1
     })).getCurrentPage().map(v => ({
         key: v.key,
         value: v.value
