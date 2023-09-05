@@ -69,7 +69,6 @@ Array.SorterType = {
     DESC: (a, b) => b - a,
     ASC: (a, b) => a - b
 }
-Array.SorterType
 /**
  * 为用户初始化云属性，建议优先执行
  * {@link storage.DEFAULT_USER_DATA}
