@@ -1,6 +1,6 @@
 /**
  * !info {Project} -来自Nomen
- * @version 1.2.3
+ * @version 1.2.4
  * NomenSQLite SQL数据管理系统
  */
 
@@ -11,7 +11,7 @@ class NomenSQLite {
     }
     static launched = false;
     static get version(){
-        return "1.2.3".split(".").map(v=>Number(v));
+        return "1.2.4".split(".").map(v=>Number(v));
     };
     static async launch(config, action, callback) {
         if (!config) throw new Error('请传入配置参数后重试');
@@ -99,8 +99,7 @@ class NomenSQLite {
         NUMBER: 'INTEGER',
         FLOAT: 'REAL',
         TEXT: 'TEXT',
-        NULL: 'NULL',
-        BLOB: 'BLOB'
+        NULL: 'NULL'
     }
 }
 
