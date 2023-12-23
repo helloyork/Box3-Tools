@@ -19,6 +19,7 @@ declare const storage: GameStorage;
 declare const http: GameHttpAPI;
 declare const rtc: GameRTC;
 declare const gui: GameGUI;
+declare const remoteChannel: ServerRemoteChannel;
 
 declare function sleep(ms: number): Promise<void>;
 
@@ -326,7 +327,7 @@ interface Math {
    *     If there is only one argument, the result is the absolute value.
    *     If any argument is +Infinity or -Infinity, the result is +Infinity.
    *     If any argument is NaN, the result is NaN.
-   *     If all arguments are either +0 or −0, the result is +0.
+   *     If all arguments are either +0 or âˆ’0, the result is +0.
    */
   hypot(...values: number[]): number;
 
@@ -354,7 +355,7 @@ interface NumberConstructor {
   /**
    * The value of Number.EPSILON is the difference between 1 and the smallest value greater than 1
    * that is representable as a Number value, which is approximately:
-   * 2.2204460492503130808472633361816 x 10‍−‍16.
+   * 2.2204460492503130808472633361816 x 10â€âˆ’â€16.
    */
   readonly EPSILON: number;
 
@@ -389,14 +390,14 @@ interface NumberConstructor {
   /**
    * The value of the largest integer n such that n and n + 1 are both exactly representable as
    * a Number value.
-   * The value of Number.MAX_SAFE_INTEGER is 9007199254740991 2^53 − 1.
+   * The value of Number.MAX_SAFE_INTEGER is 9007199254740991 2^53 âˆ’ 1.
    */
   readonly MAX_SAFE_INTEGER: number;
 
   /**
-   * The value of the smallest integer n such that n and n − 1 are both exactly representable as
+   * The value of the smallest integer n such that n and n âˆ’ 1 are both exactly representable as
    * a Number value.
-   * The value of Number.MIN_SAFE_INTEGER is −9007199254740991 (−(2^53 − 1)).
+   * The value of Number.MIN_SAFE_INTEGER is âˆ’9007199254740991 (âˆ’(2^53 âˆ’ 1)).
    */
   readonly MIN_SAFE_INTEGER: number;
 
@@ -578,7 +579,7 @@ interface String {
   /**
    * Returns true if the sequence of elements of searchString converted to a String is the
    * same as the corresponding elements of this object (converted to a String) starting at
-   * endPosition – length(this). Otherwise returns false.
+   * endPosition â€“ length(this). Otherwise returns false.
    */
   endsWith(searchString: string, endPosition?: number): boolean;
 
@@ -1672,7 +1673,7 @@ and limitations under the License.
 interface SymbolConstructor {
   /**
    * A method that determines if a constructor object recognizes an object as one of the
-   * constructor’s instances. Called by the semantics of the instanceof operator.
+   * constructorâ€™s instances. Called by the semantics of the instanceof operator.
    */
   readonly hasInstance: symbol;
 
@@ -9298,8 +9299,40 @@ interface GUIConfigItem<T extends string> {
 declare type GUIConfig<T extends string, U extends T> = {
     [name in T]: GUIConfigItem<U>;
 };
+declare type JSONValue = string | number | boolean | {
+    [x: string]: JSONValue;
+} | Array<JSONValue>;
+declare enum GameLogLevel {
+    ERROR = 0,
+    WARN = 1,
+    INFO = 2,
+    DEBUG = 3
+}
+declare type GameLoggerMethod = (...args: any[]) => void;
+declare class GameConsole {
+    clear: () => void;
+    constructor(log: (level: GameLogLevel, message: string) => void, clear: () => void);
+    assert: (assertion: any, ...args: any[]) => void;
+    log: GameLoggerMethod;
+    debug: GameLoggerMethod;
+    error: GameLoggerMethod;
+    warn: GameLoggerMethod;
+    dir: () => void;
+    dirxml: () => void;
+    group: () => void;
+    groupCollapsed: () => void;
+    groupEnd: () => void;
+    table: () => void;
+    time: () => void;
+    timeEnd: () => void;
+    timeLog: () => void;
+    timeStamp: () => void;
+    trace: () => void;
+}
 
 
+declare type TELEPORT_ERROR_STATUS = 'PLAYER_OFFLINE' | 'ACCESS_DENIED' | 'UNKNOWN';
+declare type TeleportType = (mapId: string, players: GameEntity[]) => Promise<void>;
 interface GameSoundEffectConfig {
     sample: string;
     radius: number;
@@ -9876,6 +9909,10 @@ declare class GameWorld {
         pitch?: number;
     } | string) => Sound;
     /**
+     * åœ°å›¾ç»„å†…ä¼ é€èƒ½åŠ›ï¼Œèƒ½å¤Ÿä»¤ Player è¢«ä¼ é€åˆ°å…¶ä»–åœ°å›¾ä¸­
+     */
+    teleport: TeleportType;
+    /**
      * The name of the project (read only)
      */
     projectName: string;
@@ -10036,6 +10073,11 @@ declare class GameWorld {
      * @category physics
      */
     airFriction: number;
+    /**
+     * Use obb rigid body to solve physics
+     * @category physics
+     */
+    useOBB: boolean;
     /**
      * Plays when a voxel breaks
      * @category sound
@@ -10274,7 +10316,11 @@ declare class GameWorld {
         radius?: number;
         gain?: number;
         pitch?: number;
-    } | string) => Sound);
+    } | string) => Sound, 
+    /**
+     * åœ°å›¾ç»„å†…ä¼ é€èƒ½åŠ›ï¼Œèƒ½å¤Ÿä»¤ Player è¢«ä¼ é€åˆ°å…¶ä»–åœ°å›¾ä¸­
+     */
+    teleport: TeleportType);
 }
 /**
  * {@link Game.GameVoxels} gives an interface for all the voxels in Game.  You can use it to control the terrain
@@ -11149,6 +11195,10 @@ declare enum GameBodyPart {
     RIGHT_LOWER_LEG = "rightLowerLeg",
     RIGHT_FOOT = "rightFoot"
 }
+declare type GameSkinValue = string | undefined | null;
+declare type GameSkin = {
+    [key in GameBodyPart]: GameSkinValue;
+};
 declare type GameSkinInvisible = {
     [key in GameBodyPart]: boolean;
 };
@@ -11474,9 +11524,6 @@ declare enum GameInputDirection {
     HORIZONTAL = "horizontal",
     BOTH = "both"
 }
-declare type JSONValue = string | number | boolean | {
-    [x: string]: JSONValue;
-} | Array<JSONValue>;
 interface GamePlayerKeyframe {
     duration: number;
     easeIn: GameEasing;
@@ -11571,6 +11618,21 @@ declare class GamePlayer {
      */
     removeWearable: (wearable: GameWearable) => void;
     /**
+     * Set player skin by skin name
+     * @category display
+     */
+    setSkinByName: (skinName: string) => void;
+    /**
+     * Reset player to default skin
+     * @category display
+     */
+    resetToDefaultSkin: () => void;
+    /**
+     * Clear player custom skin and restore to avatar skin
+     * @category display
+     */
+    clearSkin: () => void;
+    /**
      * Play sound for player
      * @category sound
      */
@@ -11601,7 +11663,12 @@ declare class GamePlayer {
      * @category web
      */
     openMarketplace: (productIds: number[]) => void;
-    fireClientEvent: (args: JSONValue) => void;
+    getMiaoShells: () => Promise<number>;
+    /**
+     * open share modal
+     * @category web
+     */
+    share: (content: string) => void;
     /**
      * Name of the player.  Constant.
      */
@@ -11955,6 +12022,11 @@ declare class GamePlayer {
      */
     muted: boolean;
     /**
+     * Skin parts
+     * @category display
+     */
+    skin: GameSkin;
+    /**
      * Skin parts invisible
      * @category display
      */
@@ -12028,6 +12100,21 @@ declare class GamePlayer {
      */
     removeWearable: (wearable: GameWearable) => void, 
     /**
+     * Set player skin by skin name
+     * @category display
+     */
+    setSkinByName: (skinName: string) => void, 
+    /**
+     * Reset player to default skin
+     * @category display
+     */
+    resetToDefaultSkin: () => void, 
+    /**
+     * Clear player custom skin and restore to avatar skin
+     * @category display
+     */
+    clearSkin: () => void, 
+    /**
      * Play sound for player
      * @category sound
      */
@@ -12072,10 +12159,15 @@ declare class GamePlayer {
      * open product purchase dialog
      * @category web
      */
-    openMarketplace: (productIds: number[]) => void, fireClientEvent: (args: JSONValue) => void);
+    openMarketplace: (productIds: number[]) => void, getMiaoShells: () => Promise<number>, 
+    /**
+     * open share modal
+     * @category web
+     */
+    share: (content: string) => void);
 }
 /**
- * Player 用户设备相关的接口
+ * Player ç”¨æˆ·è®¾å¤‡ç›¸å…³çš„æŽ¥å£
  */
 declare class PlayerNavigator {
     emitEvent: (type: string, value: object) => void;
@@ -13012,6 +13104,17 @@ declare class GameQueryResult implements AsyncIterable<any> {
         value: any;
     }>, then: (resolve: (rows: any[]) => any, reject: (err: any) => any) => void);
 }
+/**
+ * é”™è¯¯ç è§„èŒƒï¼š{status:T; code:number, msg: string}
+ * code: é”™è¯¯ç 
+ * status: é”™è¯¯ç±»åž‹
+ * msg: é”™è¯¯æè¿°
+ */
+declare type CommonError<T> = {
+    status: T;
+    code: number;
+    msg: string;
+};
 
 
 interface GameGUIEvent {
@@ -13185,6 +13288,20 @@ declare class GameRGBColor {
     toString(): string;
 }
 
+
+declare type SendClientEventType = (entities: GamePlayerEntity | GamePlayerEntity[], clientEvent: JSONValue) => void;
+declare type ServerEvent = {
+    tick: number;
+    entity: GamePlayerEntity;
+    args: JSONValue;
+};
+declare class ServerRemoteChannel {
+    sendClientEvent: SendClientEventType;
+    broadcastClientEvent: (clientEvent: JSONValue) => void;
+    onServerEvent: GameEventChannel<ServerEvent>;
+    constructor(sendClientEvent: SendClientEventType, broadcastClientEvent: (clientEvent: JSONValue) => void, onServerEvent: GameEventChannel<ServerEvent>);
+}
+
 declare class GameRTCChannel {
     add: (entity: GamePlayerEntity) => Promise<void>;
     remove: (entity: GamePlayerEntity) => Promise<void>;
@@ -13202,10 +13319,11 @@ declare class GameRTC {
     constructor(createChannel: (channelId?: string) => Promise<GameRTCChannel>);
 }
 
-declare type DB_ERROR_STATUS = 'PARAMS_INVALID' | 'DB_NAME_INVALID' | 'KEY_INVALID' | 'VALUE_INVALID' | 'SERVER_FETCH_ERROR' | 'UNKNOWN';
+declare type DB_ERROR_STATUS = 'CONSTRAINT_TARGET_INVALID' | 'PARAMS_INVALID' | 'DB_NAME_INVALID' | 'KEY_INVALID' | 'VALUE_INVALID' | 'SERVER_FETCH_ERROR' | 'REQUEST_THROTTLED' | 'UNKNOWN';
 declare class GameStorage implements I.GameStorage {
     getDataStorage: (key: string) => GameDataStorage;
-    constructor(getDataStorage: (key: string) => GameDataStorage);
+    getGroupStorage: (key: string) => GameDataStorage | undefined;
+    constructor(getDataStorage: (key: string) => GameDataStorage, getGroupStorage: (key: string) => GameDataStorage | undefined);
 }
 declare type JSONValue = I.JSONValue;
 declare type ResultValue = {
