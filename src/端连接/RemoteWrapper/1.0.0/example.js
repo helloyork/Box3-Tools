@@ -39,7 +39,7 @@ world.onPlayerJoin(({ entity }) => {
 
 // 另一个例子，展示简易聊天框
 // CLIENT clientIndex.js
-let rmc = RemoteClientWrapper();
+rmc = RemoteClientWrapper();
 sendButton.eventOnce("pointerdown", ()=>{
     rmc.send(chatBox.findChildByName("textbox").text); // 假想的文字输入框
     rmc.onMessage("data", (message)=>{ // 收到来自服务器的新消息
