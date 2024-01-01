@@ -1,6 +1,6 @@
 
-function RemoteClientWrapper() {
-    let events = [], seed = 2024, dport = 6000,random = () => (seed = (seed * 9301 + 49297) % 233280, parseInt(seed / 233280.0 * 1000000));
+function RemoteClientWrapper(port) {
+    let events = [], seed = 2024, dport = port || 6000,random = () => (seed = (seed * 9301 + 49297) % 233280, parseInt(seed / 233280.0 * 1000000));
     function wrap(type, data, id, port = dport) {
         return { type, data, id, port }
     }

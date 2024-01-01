@@ -38,6 +38,7 @@ class RemoteGroups {
 /**
  * @callback WhenGetMessage
  * @param {JSONValue} arg 客户端发送的数据
+ * @param {GameEntity} entity 玩家实体
  */
 /**
  * @typedef {Object} RemoteServerEventToken
@@ -264,3 +265,4 @@ class RemoteServerWrapper {
         return new Error(`[Remote Server] ${this.constructor.quitCode[c]}`);
     }
 }
+module.exports = RemoteServerWrapper
