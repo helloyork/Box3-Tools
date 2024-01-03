@@ -5,7 +5,6 @@ function RemoteClientWrapper(port) {
         return { type, data, id, port }
     }
     function send(data, id, type = "data") {
-        console.log("sent")
         remoteChannel.sendServerEvent(wrap(type, data, id));
         return id;
     }
