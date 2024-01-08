@@ -26,7 +26,7 @@ pullButton.eventOnce("pointerdown", ()=>{
 // SERVER index.js
 world.onPlayerJoin(({ entity }) => {
     let rms = new RemoteServerWrapper(entity); // 初始化管理器
-    rms.onMessage("communicate", async (request, entity) => {
+    rms.onMessage("communicate", async ({request}, entity) => {
         if(request.action === "抽卡"){
             entity.yuanshi -= 160;
             let result = RANDOM_TRASH(); // 随机生成抽卡结果

@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 
 interface Box3SoundEffectConfig {
     sample: string;
