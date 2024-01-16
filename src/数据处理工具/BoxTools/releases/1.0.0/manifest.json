@@ -1,0 +1,54 @@
+{
+    "manifest_version": 3,
+    "name": "BoxTools",
+    "version": "1.0.0",
+    "author": "Nomen",
+    "description": "BoxTools 1.0.0 可以用于在地图中读取控制台，用于导出或调试操作，同时提供了一些例如备份地图脚本的工具",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage",
+        "scripting",
+        "declarativeContent",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "host_permissions": [
+        "https://*.dao3.fun/*",
+        "https://dao3.fun/*"
+    ],
+    "action": {
+        "default_icon": "src/img/icon.png",
+        "default_title": "BoxTools"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+				"*://box3.fun/e/*", "*://box3.codemao.cn/e/*",
+				"*://preprod-view.dao3.fun/e/*",
+				"*://view.dao3.fun/e/*"
+			],
+            "js": [
+                "src/script/index.js"
+            ],
+            "run_at": "document_start",
+			"all_frames": true
+        }
+    ],
+    "icons": {
+        "16": "src/img/icon.png",
+        "48": "src/img/icon.png",
+        "128": "src/img/icon.png"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "*"
+            ],
+            "matches": [
+                "https://*.dao3.fun/*"
+            ]
+        }
+    ],
+    "homepage_url": "https://box3.codemao.cn/u/Nomen"
+}
