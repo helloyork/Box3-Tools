@@ -1,0 +1,2 @@
+
+remoteChannel.onServerEvent(console.log)

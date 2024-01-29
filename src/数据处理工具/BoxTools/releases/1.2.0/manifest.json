@@ -1,0 +1,58 @@
+{
+    "manifest_version": 3,
+    "name": "BoxTools",
+    "version": "1.2.0",
+    "author": "Nomen",
+    "description": "BoxTools 1.2.0 提供了一些强大的工具，例如同步代码和控制台操作",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage",
+        "scripting",
+        "declarativeContent",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback",
+        "nativeMessaging"
+    ],
+    "host_permissions": [
+        "https://*.dao3.fun/*",
+        "https://dao3.fun/*"
+    ],
+    "action": {
+        "default_icon": "src/img/icon.png",
+        "default_title": "BoxTools"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+				"*://box3.fun/e/*", "*://box3.codemao.cn/e/*",
+				"*://preprod-view.dao3.fun/e/*",
+				"*://view.dao3.fun/e/*"
+			],
+            "js": [
+                "src/script/index.js"
+            ],
+            "run_at": "document_start",
+			"all_frames": true
+        }
+    ],
+    "externally_connectable": {
+        "matches": ["*://*/*"]
+    },
+    "icons": {
+        "16": "src/img/icon.png",
+        "48": "src/img/icon.png",
+        "128": "src/img/icon.png"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "*"
+            ],
+            "matches": [
+                "https://*.dao3.fun/*"
+            ]
+        }
+    ],
+    "homepage_url": "https://box3.codemao.cn/u/Nomen"
+}
