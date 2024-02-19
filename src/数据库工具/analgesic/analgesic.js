@@ -1,4 +1,8 @@
 /* eslint-disable no-undef */
+/**
+ * !info {Module} - 来自Nomen
+ * 该库不能用于生产环境！尚未进行测试，并且含有大量问题
+ */
 
 const DataTypes = {
     STRING: "string",
