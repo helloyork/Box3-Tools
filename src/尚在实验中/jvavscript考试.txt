@@ -15,7 +15,7 @@
 第一部分 - 基础·选择题（每题5分，共5题，总计25分）
 
 1. 以下哪一个是正确的控制台输出语句
-A. System.out.printl("Hello World!");
+A. System.out.println("Hello World!");
 B. print("Hello World!")
 C. console.log("Hello World!");
 
@@ -47,7 +47,7 @@ C. ReferenceError
 
 6. 递归的基本思路以及作用
 
-7. 解释以下环境上下文对于闭包的影响
+7. 解释一下环境上下文对于闭包的影响
 
 8. 基本阐述原型、原型链与继承，必须包含其基础思路，底层实现和其作用
 
@@ -63,7 +63,7 @@ C. ReferenceError
 
 11. 简单阐述迭代器的作用，并且尝试迭代一个异步任务
 
-12. 简单阐述微任务与宏任务之间的区别
+12. 简单阐述消息队列的工作过程
 
 13. 根据ES6语法写一句导入包Package/Nomen中的init函数的语句
 
