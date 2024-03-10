@@ -1,22 +1,110 @@
-/* eslint-disable no-undef */
 
 /**
- * Version number that follows the **semver specification**  
- * for example: "^1.2.3"
- * @typedef {string} Version
- */
-/**
- * @typedef {Object} ModuleDefinition
- * @property {string} name
- * @property {string} version
- * @property {string} description
- * @property {string} script
- * @property {{[key: string]: string}} dependencies
+ * dependencies:
+ * - ModuleManager
+ * - Require
+ * - StorageProvider
+ * - Events
  */
 
-/**
- * @requires Require
- */
+class StorageProvider {
+    constructor() {
+        this.storage = null;
+    }
+
+    setStorage(storage) {
+        this.storage = storage;
+        return this;
+    }
+    call(obj, key, args) {
+        if (typeof obj[key] === "function") {
+            return obj[key](...args);
+        }
+        throw new Error(`Provider ${obj.constructor.name || "StorageProvider"} does not have method ${key}`);
+    }
+
+    set(key, value) {
+        return this.call(this.storage, "set", [key, value]);
+    }
+    update(key, handler) {
+        return this.call(this.storage, "update", [key, handler]);
+    }
+    get(key) {
+        return this.call(this.storage, "get", [key]);
+    }
+    list() {
+        return this.call(this.storage, "list", []);
+    }
+    remove(key) {
+        return this.call(this.storage, "remove", [key]);
+    }
+}
+
+
+class Require {
+    static Executable = class Executable {
+        static getExecutableString(str) {
+            return `;const {module,require} = args;(function(){(${typeof str === "string" ? str : str.toString()})?.()})();return {module};`;
+        }
+        static createFunction(args, body) {
+            return new Function(...args, body);
+        }
+        cache = null;
+        exports = null;
+        _module = {
+            exports: {},
+        };
+        constructor(func, require) {
+            this.module = Executable.getExecutableString(func);
+            this.require = require;
+        }
+        getArgs({ module, require } = { require: this.require}) {
+            return {
+                args: ["args"],
+                content: {
+                    module,
+                    require,
+                }
+            };
+        }
+        getModule() {
+            return this._module;
+        }
+        exec() {
+            if (this.cache) return this.cache;
+            let result = Executable.createFunction(this.getArgs().args, this.module)(this.getArgs({
+                module: this.getModule(),
+                require: this.require
+            }).content);
+            this.cache = result.module?.exports || {};
+            return this.cache;
+        }
+    };
+    constructor(modules = []) {
+        this.modules = {};
+        this.addModules(modules);
+    }
+    getModules() {
+        return this.modules;
+    }
+    addModules(modules) {
+        Object.keys(modules).forEach((key) => {
+            this.addModule(key, modules[key]);
+        });
+        return this;
+    }
+    addModule(name, func) {
+        this.modules[name] = Reflect.construct(Require.Executable, [func, this.require.bind(this)]);
+        return this;
+    }
+    require(module) {
+        if (this.getModules()[module]) {
+            return this.getModules()[module].exec();
+        }
+        throw new Error(`Module ${module} not found`);
+    }
+}
+
 class ModuleManager {
     /* static */
     static Require = Require;
@@ -220,33 +308,54 @@ class ModuleManager {
     }
 }
 
-const mm = ModuleManager.getInstance({}, {
-    "a": {
-        "name": "a",
-        "version": "^1.0.0",
-        "description": "a",
-        "script": "a",
-        "dependencies": {
-            "b": "^1.0.0"
-        }
-    },
-    "b": {
-        "name": "b",
-        "version": "^1.0.1",
-        "description": "b",
-        "script": "b",
-        "dependencies": {}
+class Events {
+    constructor() {
+        this.events = {};
     }
-}).registerScript("a", function() {
-    console.log(require("b"));
-    module.exports = {
-        "a": 1
-    };
-}).registerScript("b", function() {
-    module.exports = {
-        "b": 2
-    };
-}).build();
+    listen(name, handler) {
+        if (!this.events[name]) this.events[name] = [];
+        this.events[name].push(handler);
+        return {
+            cancel: () => this.remove(name, handler)
+        };
+    }
+    emit(name, ...args) {
+        if (this.events[name]) this.events[name].forEach(handler => {
+            try {
+                handler(...args);
+            } catch (err) {
+                console.error(err, err.stack);
+            }
+        });
+    }
+    once(name, handler) {
+        const f = (...args) => {
+            handler(...args);
+            this.events[name] = this.events[name].filter(v => v !== f);
+        };
+        this.listen(name, f);
+        return {
+            cancel: () => this.remove(name, f)
+        };
+    }
+    remove(name, handler) {
+        if (this.events[name]) this.events[name] = this.events[name].filter(v => v !== handler);
+    }
+    hasListener(name) {
+        return !!this.events[name] && this.events[name].length > 0;
+    }
+    clear(name) {
+        if (this.events[name]) {
+            this.events[name] = [];
+        }
+    }
+    countListeners(name) {
+        return this.events[name] ? this.events[name].length : 0;
+    }
+}
 
-console.log(mm.require("a"));
-
+module.exports = {
+    StorageProvider,
+    ModuleManager,
+    Require
+};
