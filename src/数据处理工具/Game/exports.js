@@ -357,5 +357,6 @@ class Events {
 module.exports = {
     StorageProvider,
     ModuleManager,
-    Require
+    Require,
+    Events
 };
