@@ -8,7 +8,6 @@
  * - ModuleManager  
  * - - Require  
  * - StorageProvider  
- * @class
  */
 /**
  * @typedef {import("./exports").ModuleManager} ModuleManager
@@ -16,6 +15,25 @@
  * @typedef {import("./exports").Require} Require
  * @typedef {import("./exports").StorageProvider} StorageProvider
  */
+class Service {
+    serviceProvider = null;
+
+    service = null;
+    /**@param {Game} game */
+    constructor(game) {
+        this.game = game;
+        this._init();
+    }
+    _init() {
+        if (!this.serviceProvider) throw this.game.error(this.game.Game.getText("error:serviceProviderMissing"));
+        this.service = Reflect.construct(this.serviceProvider, []);
+        return this;
+    }
+    start() { }
+    stop() { }
+    getStatus() { }
+    build(...args) { }
+}
 class Game {
     /* static */
     /**@type {{Events: typeof Events, ModuleManager: typeof ModuleManager, Require: typeof Require, StorageProvider: typeof StorageProvider}} */
@@ -23,7 +41,7 @@ class Game {
         Events: null,
         ModuleManager: null,
         Require: null,
-        StorageProvider: null
+        StorageProvider: null,
     };
     static instance = null;
     static Logger = {
@@ -33,16 +51,21 @@ class Game {
         error(m) {
             if (!(m instanceof Error)) m = new Error(m);
             console.error(this._gen("ERROR", m.message + "\n" + m.stack));
+            return m;
         }
     };
     static textMap = {
         "error:timeLimitExceeded": "Time Limit Exceeded",
-        "error:storageProviderMissing": "StorageProvider is not set.",
-        "error:storageMissing": "Storage ${name} is not initialized."
+        "error:importsMissing": "Imports ${name} is missing.",
+        "error:serviceProviderMissing": "Service Provider is missing.",
+        "error:serviceMissing": "Service ${name} is missing.",
+    };
+    static EventTypes = {
+        ERROR: {
+            UNKNOWN_ERROR: "error:unknownError",
+        }
     };
     static defaultConfig = {
-        storages: [],
-        allowAutoStorageInit: true
     };
     static Utils = {
         timeLimit: async (fn, time) => {
@@ -68,50 +91,86 @@ class Game {
 
     /* */
     config = {};
-    storage = {};
-    Game = Game;
     imports = Game.imports;
+    Game = Game;
+    /**@type {{moduleManager: ModuleManager, events: Events}} */
+    game = {
+        moduleManager: null,
+        events: null,
+    };
+    services = {};
+    _serviceProviders = {};
 
     /**@type {Events} */
     events = null;
-    /**@type {ModuleManager} */
-    moduleManager = null;
 
     /* constructor */
     constructor(config) {
         if (this.constructor.instance !== null) {
             return this.constructor.instance;
         }
-        this._loadConfig(config);
+        this._loadConfig(config)._init();
     }
 
     /* public */
-    setStorageProvider(storage) {
-        this._storageProvider = storage;
+    registerServiceProvider(name, service) {
+        this._serviceProviders[name] = service;
+        return service;
+    }
+    buildService(service, ...args) {
+        if (typeof service === "string") {
+            this.services[service] = this._serviceProviders[service];
+        } else {
+            let name = Object.keys(this._serviceProviders).find(key => this._serviceProviders[key] === service);
+            if (!name) throw this.error(this.getText("error:serviceMissing", { name }));
+            this.services[name] = Reflect.construct(service, [this]);
+            this.services[name].build(...args);
+            return this;
+        }
         return this;
     }
-    initStorage(name, ...args) {
-        if (!this._storageProvider) throw this.error(this.Game.getText("error:storageProviderMissing"));
-        this.storage[name] = Reflect.construct(this._storageProvider, [name, ...args]);
+    launchService(name) {
+        if (!this.services[name]) throw this.error(this.getText("error:serviceMissing", { name }));
+        this.services[name].start();
         return this;
     }
-    getStorage(name) {
-        if (!this.storage[name] && !this.config.allowAutoStorageInit) throw this.error(this.Game.getText("error:storageMissing", { name }));
-        return this.storage[name] || (this.initStorage(name), this.storage[name]);
+    stopService(name) {
+        if (!this.services[name]) throw this.error(this.getText("error:serviceMissing", { name }));
+        this.services[name].stop();
+        return this;
+    }
+    restartService(name) {
+        return this.stopService(name).launchService(name);
+    }
+    getService(name) {
+        return this.services[name];
+    }
+    registerModule(name, module) {
+        this.game.moduleManager.addModule(name, module, false);
+        return this;
+    }
+    requireModule(name) {
+        return this.game.moduleManager.require(name);
+    }
+    build() {
+        this._build();
+        return this;
     }
     error(m) {
-        this.Game.Logger.error(m);
-        return m;
+        return this.Game.Logger.error(m);
     }
 
     /* private */
-    _storageProvider = null;
+    _build() {
+        this.game.moduleManager.build();
+        return this;
+    }
     _init() {
-        this.events = Reflect.construct(this.Game.imports.Events, []);
-        this.moduleManager = Reflect.construct(this.Game.imports.ModuleManager, [{}]);
-        this.config.storages.forEach(name => {
-            this.initStorage(name);
+        Object.keys(this.Game.imports).forEach(key => {
+            if (!this.Game.imports[key]) throw this.error(this.Game.getText("error:importsMissing", { name: key }));
         });
+        this.game.events = Reflect.construct(this.Game.imports.Events, []);
+        this.game.moduleManager = Reflect.construct(this.Game.imports.ModuleManager, [{}]);
         return this;
     }
     _loadConfig(config) {
@@ -127,4 +186,4 @@ class Game {
 }
 
 
-
+export { Game, Service };

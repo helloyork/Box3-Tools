@@ -13,7 +13,7 @@ class NomenBox {
             info: true,
             pluginShared: {},
             plugins: []
-        }
+        };
     }
     static get errorMessages() {
         return {
@@ -21,10 +21,10 @@ class NomenBox {
             "-2": "事件名称必须是一个有效字符串",
             "-1": "配置是必须的",
             "1": "尝试导入一个不存在的插件时发生错误"
-        }
+        };
     }
     static get nthis() {
-        return this._nthis ? this._nthis : (this._nthis = Symbol("nthis"), this._nthis)
+        return this._nthis ? this._nthis : (this._nthis = Symbol("nthis"), this._nthis);
     }
     static getInstance() {
         return this.__instance;
@@ -67,16 +67,16 @@ class NomenBox {
             version: this._plugins[id].version || "0.0.1",
             eventsLength: Object.keys(this._plugins[id].events).length,
             listeningEvents: Object.keys(this._plugins[id].events)
-        }
+        };
     }
     shareToPlugin(...data) {
         Object.assign(this.pluginShared, ...data);
     }
     noticeToPlugin(id, msg) {
-        this._triggerEvent(`notification:${id}`, msg)
+        this._triggerEvent(`notification:${id}`, msg);
     }
     sendToPlugin(id, data) {
-        if (this._plugins[id] && this._plugins[id].defaults) this._plugins[id].defaults(data)
+        if (this._plugins[id] && this._plugins[id].defaults) this._plugins[id].defaults(data);
     }
     plug(id) {
         if (!this._plugins[id]) throw this._genError("1");
@@ -94,7 +94,7 @@ class NomenBox {
             noticeToPlugin: this.noticeToPlugin.bind(this),
             sendToPlugin: this.sendToPlugin.bind(this),
             pluginInfo: this.pluginInfo.bind(this),
-        })
+        });
     }
 
     /* Event Describer */
@@ -106,13 +106,13 @@ class NomenBox {
     _require(path) {
         let nrequire = function (p) {
             try {
-                return { module: require(p) }
+                return { module: require(p) };
             } catch {
-                return { module: null }
+                return { module: null };
             }
-        }
-        if (typeof path == "string" && path.startsWith("./") && path.endsWith(".js")) return nrequire(path)
-        else if (typeof path == "string" && !path.startsWith("./")) return nrequire(`./${path}.js`)
+        };
+        if (typeof path == "string" && path.startsWith("./") && path.endsWith(".js")) return nrequire(path);
+        else if (typeof path == "string" && !path.startsWith("./")) return nrequire(`./${path}.js`);
         else if (Array.isArray(path) && path.every(v => typeof v == "string")) return path.map(v => nrequire(v));
     }
     _pluginExec(id, event, ...arg) {
@@ -121,7 +121,7 @@ class NomenBox {
                 this._plugins[id].events[event](...arg);
             }
         } catch (error) {
-            this._error(`插件[${id}]运行时遇到错误：${error}`)
+            this._error(`插件[${id}]运行时遇到错误：${error}`);
         }
     }
     _initPlugins(plugins) {
@@ -129,32 +129,32 @@ class NomenBox {
             plugins.forEach(p => {
                 try {
                     if (p.namespace && p.id && p.id.length >= 1 && this._plugins[p.namespace + ":" + p.id] == undefined) {
-                        console.log(p.namespace + ":" + p.id)
+                        console.log(p.namespace + ":" + p.id);
                         this._plugins[p.namespace + ":" + p.id] = p;
                         if (this._plugins[p.namespace + ":" + p.id].events) {
                             Object.keys(this._plugins[p.namespace + ":" + p.id].events).forEach(e => {
                                 this._describeEvent(e, this._plugins[p.namespace + ":" + p.id].events[e]);
-                            })
-                        };
+                            });
+                        }
                         this._triggerEvent("plugin:onload", {
                             [this.constructor.nthis]: this,
                             plugin: p
-                        })
+                        });
                         this._info(`插件载入：[${p.namespace + ":" + p.id}]`);
                     } else if (!p.namespace && (!p.id || p.id.length <= 0)) {
-                        this._warn(`存在未知的插件，无法载入，请检查你的插件集`);
+                        this._warn("存在未知的插件，无法载入，请检查你的插件集");
                     } else if (this._plugins[p.namespace + ":" + p.id]) {
-                        this._warn(`插件 ${p.namespace + ":" + p.id} 已经存在，请检查是否存在冲突`)
+                        this._warn(`插件 ${p.namespace + ":" + p.id} 已经存在，请检查是否存在冲突`);
                     }
                 } catch (error) {
-                    this._error(`尝试载入插件时遇到错误：${error}`)
+                    this._error(`尝试载入插件时遇到错误：${error}`);
                 }
-            })
+            });
         }
     }
     async _initDatabase(arg) {
-        if (!this.db) this._db = null
-        else if (this.db && typeof this.db == "function") this._db = await this.db(arg)
+        if (!this.db) this._db = null;
+        else if (this.db && typeof this.db == "function") this._db = await this.db(arg);
         else if (typeof this.db == "object") this._db = this.db;
     }
     _info(msg) {
@@ -172,7 +172,7 @@ class NomenBox {
             "warn": "warning",
             "error": "error"
         };
-        if (this[lvms[level]] || level == "error") console[level](`[NomenBox ${lvms[level].toUpperCase()}] ${msg}`)
+        if (this[lvms[level]] || level == "error") console[level](`[NomenBox ${lvms[level].toUpperCase()}] ${msg}`);
     }
     _describeEvent(event, c) {
         if (typeof event !== "string") throw this._genError("-2");
@@ -185,6 +185,6 @@ class NomenBox {
     }
     _genError(code) {
         let errorMessages = this.constructor.errorMessages;
-        return new Error(`[NomenBox: ${code}]${errorMessages[code] ? errorMessages[code] : "error when running NomenBox"}`)
+        return new Error(`[NomenBox: ${code}]${errorMessages[code] ? errorMessages[code] : "error when running NomenBox"}`);
     }
 }
