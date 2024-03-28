@@ -355,7 +355,7 @@ class Events {
 }
 
 
-export default {
+module.exports = {
     StorageProvider,
     ModuleManager,
     Require,

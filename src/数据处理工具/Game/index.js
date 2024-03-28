@@ -115,16 +115,15 @@ class Game {
     /* public */
     registerServiceProvider(name, service) {
         this._serviceProviders[name] = service;
-        return service;
+        return { name, service };
     }
-    buildService(service, ...args) {
+    configService(service, ...args) {
         if (typeof service === "string") {
             this.services[service] = this._serviceProviders[service];
-        } else {
-            let name = Object.keys(this._serviceProviders).find(key => this._serviceProviders[key] === service);
-            if (!name) throw this.error(this.getText("error:serviceMissing", { name }));
-            this.services[name] = Reflect.construct(service, [this]);
-            this.services[name].build(...args);
+        } else if(typeof service === "object" && service !== null) {
+            if (!service.name || !service.service) throw this.error(this.getText("error:serviceMissing", { name: JSON.stringify(service) }));
+            this.services[service.name] = Reflect.construct(service.service, [this]);
+            this.services[service.name].config(...args);
             return this;
         }
         return this;
@@ -186,4 +185,7 @@ class Game {
 }
 
 
-export { Game, Service };
+module.exports = {
+    Game,
+    Service,
+}

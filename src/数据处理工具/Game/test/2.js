@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 
-import { Game } from "../index.js";
-import modules from "../exports.js";
+const { Game } = require("../index.js");
+const modules = require("../exports.js");
 
 class Service {
     serviceProvider = null;
@@ -10,37 +10,19 @@ class Service {
     /**@param {Game} game */
     constructor(game) {
         this.game = game;
-        this._init();
-    }
-    _init() {
-        if (!this.serviceProvider) throw this.game.error(this.game.Game.getText("error:serviceProviderMissing"));
-        this.service = Reflect.construct(this.serviceProvider, []);
-        return this;
     }
     start() { }
     stop() { }
     getStatus() { }
-    build() { }
+    config() { }
 }
 
-
-class WorldService extends Service {
-    /**
-     * @param {GamePlayerEntityEvent} name 
-     * @param {handler: (event: GameEventChannel => void)} f 
-     * @returns {GameEventHandlerToken}
-     */
-    on(name, f) {
-        return world[name]?.(f);
-    }
-}
 
 class TestServiceProvider {
     constructor() {
-        this.a = 1;
     }
     log() {
-        console.log(this.a);
+        console.log("service");
     }
 }
 class TestService {
@@ -57,6 +39,7 @@ class TestService {
     }
     start() {
         this.game.Game.Logger.log("TestService Start");
+        this.service.log();
     }
     stop() {
         this.game.Game.Logger.log("TestService Stop");
@@ -70,12 +53,6 @@ class TestService {
     }
 }
 
-// new WorldService().on("a",(({entity})=>{}))
-class StorageService extends Service {
-    start() {
-
-    }
-}
 
 Game.setImports(modules);
 const game = new Game({});
